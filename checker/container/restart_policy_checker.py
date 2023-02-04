@@ -43,8 +43,8 @@ class RestartPolicyChecker(BaseChecker):
             test_passed = False
 
         elif restart_policy_max_retry_count > 5:
-            error_info = f"Maximum retry count for container {container.id} is set to {restart_policy_max_retry_count}" \
-                         f"Consider changing it to 5 or lower."
+            error_info = f"Maximum retry count for container {container.id} is set to {restart_policy_max_retry_count}." \
+                         f" It should be set to 5 or lower."
             test_passed = False
 
         return test_passed, error_info

@@ -1,10 +1,15 @@
+import docker
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from checker.container.restart_policy_checker import RestartPolicyChecker
 
 
-# Press the green button in the gutter to run the script.
+def run_checkers():
+    docker_client = docker.from_env()
+    checker = RestartPolicyChecker(docker_client)
+    result = checker.run_checker()
+    print(result.message)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    run_checkers()
 

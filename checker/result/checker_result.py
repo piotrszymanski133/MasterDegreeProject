@@ -1,11 +1,10 @@
-from checker.result.result_type import ResultType
+from enum import Enum
 
 
-class CheckerResult:
-
-    def __init__(self, result: ResultType, message: str):
-        self.result = result
-        self.message = message
+class CheckerResult(Enum):
+    PASSED = 0,
+    PASSED_WITH_WARNINGS = 1,
+    FAILED = 2
 
     def __eq__(self, other):
-        return self.result == other.result and self.message == other.message
+        return self.value == other.value

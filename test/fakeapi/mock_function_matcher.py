@@ -7,6 +7,8 @@ def match_mock_function(mock_attribute: str, function_params: dict):
             return fake_api.get_fake_containers(function_params)[1]
         case 'inspect_container.return_value':
             return fake_api.get_fake_inspect_container(function_params)[1]
+        case 'volumes.return_value':
+            return fake_api.get_fake_volume_list(function_params)[1]
 
     """
 mock_attrs = {

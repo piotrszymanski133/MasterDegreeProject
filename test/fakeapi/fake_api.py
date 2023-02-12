@@ -382,37 +382,17 @@ def get_fake_top():
     }
 
 
-def get_fake_volume_list():
+def get_fake_volume_list(config):
     status_code = 200
     response = {
-        'Volumes': [
-            {
-                'Name': 'perfectcherryblossom',
-                'Driver': 'local',
-                'Mountpoint': '/var/lib/docker/volumes/perfectcherryblossom',
-                'Scope': 'local'
-            }, {
-                'Name': 'subterraneananimism',
-                'Driver': 'local',
-                'Mountpoint': '/var/lib/docker/volumes/subterraneananimism',
-                'Scope': 'local'
-            }
-        ]
+        'Volumes': [config]
     }
     return status_code, response
 
 
-def get_fake_volume():
+def get_fake_volume(config):
     status_code = 200
-    response = {
-        'Name': 'perfectcherryblossom',
-        'Driver': 'local',
-        'Mountpoint': '/var/lib/docker/volumes/perfectcherryblossom',
-        'Labels': {
-            'com.example.some-label': 'some-value'
-        },
-        'Scope': 'local'
-    }
+    response = config
     return status_code, response
 
 

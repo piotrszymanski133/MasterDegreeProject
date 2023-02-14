@@ -1,4 +1,4 @@
-from factory.checkers_factory import CheckersFactory
+from checker.factory.checkers_factory import CheckersFactory
 
 
 def run_checkers():

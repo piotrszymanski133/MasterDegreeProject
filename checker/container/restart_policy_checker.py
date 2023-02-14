@@ -6,7 +6,6 @@ from checker.result.checker_result import CheckerResult
 
 
 class RestartPolicyChecker(BaseChecker):
-    EMPTY_MESSAGE = ""
     HOST_CONFIG_PROPERTY_NAME = "HostConfig"
     RESTART_POLICY_PROPERTY_NAME = "RestartPolicy"
     RESTART_POLICY_NAME_PROPERTY_NAME = "Name"

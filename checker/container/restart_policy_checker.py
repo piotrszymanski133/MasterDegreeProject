@@ -3,7 +3,6 @@ from docker.models.containers import Container
 from functional import seq
 from checker.base_checker import BaseChecker
 from checker.result.checker_result import CheckerResult
-from logger.formatter import get_logger
 
 
 class RestartPolicyChecker(BaseChecker):
@@ -14,8 +13,7 @@ class RestartPolicyChecker(BaseChecker):
     RESTART_POLICY_MAX_RETRY_COUNT_PROPERTY_NAME = "MaximumRetryCount"
 
     def __init__(self, docker_client: DockerClient):
-        self.docker_client = docker_client
-        self.logger = get_logger(self.__class__.__name__)
+        super().__init__(docker_client)
 
     def run_checker(self) -> CheckerResult:
         containers = self.docker_client.containers.list()

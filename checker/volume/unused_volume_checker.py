@@ -5,14 +5,12 @@ from functional import seq
 
 from checker.base_checker import BaseChecker
 from checker.result.checker_result import CheckerResult
-from logger.formatter import get_logger
 
 
 class UnusedVolumeChecker(BaseChecker):
 
     def __init__(self, docker_client: DockerClient):
-        self.docker_client = docker_client
-        self.logger = get_logger(self.__class__.__name__)
+        super().__init__(docker_client)
 
     def run_checker(self):
         volumes = self.docker_client.volumes.list()

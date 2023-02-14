@@ -27,7 +27,7 @@ class RestartPolicyChecker(BaseChecker):
             self.logger.info("Restart policies are set properly")
             return CheckerResult.PASSED
 
-    def __check_container_restart_policy(self, container: Container):
+    def __check_container_restart_policy(self, container: Container) -> tuple[bool, str]:
         error_info = ""
         test_passed = True
         restart_policy = container.attrs \
@@ -50,7 +50,7 @@ class RestartPolicyChecker(BaseChecker):
 
         return test_passed, error_info
 
-    def __generate_message(self, messages):
+    def __generate_message(self, messages: str) -> str:
         error_message = ""
         for message in messages:
             error_message += message + "\n"

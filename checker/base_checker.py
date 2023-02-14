@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from docker import DockerClient
+from checker.result.checker_result import CheckerResult
 from logger.formatter import get_logger
 
 
@@ -10,5 +11,5 @@ class BaseChecker(ABC):
         self.logger = get_logger(self.__class__.__name__)
 
     @abstractmethod
-    def run_checker(self):
+    def run_checker(self) -> CheckerResult:
         pass

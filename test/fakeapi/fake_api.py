@@ -182,6 +182,15 @@ def get_fake_inspect_image():
     return status_code, response
 
 
+def get_fake_node_list(params):
+    status_code = 200
+    if type(params) is list:
+        response = params
+    else:
+        response = [params]
+    return status_code, response
+
+
 def get_fake_insert_image():
     status_code = 200
     response = {'StatusCode': 0}

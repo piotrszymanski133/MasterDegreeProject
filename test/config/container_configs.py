@@ -119,3 +119,13 @@ volume_config = {
     },
     'Scope': 'local'
 }
+
+master_node_config = {
+    'Id': 'TestNode',
+    'ShortId': 'TestNode',
+    'Version': 153,
+    'IdAttribute': 'Id',
+    'Spec': {
+        'Role': 'Manager'
+    }
+}

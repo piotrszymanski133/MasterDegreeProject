@@ -1,3 +1,0 @@
-import checker.base_checker
-import checker.container.restart_policy_checker
-import checker.volume.unused_volume_checker

@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  public_container:
+    image: nginx:1.23.3
+    ports:
+    - "9300:8080"
+    networks:
+      - public
+
+  non_public_container_in_public_network:
+    image: nginx:1.23.3
+    networks:
+      - public
+
+  non_public_container_in_both_networks:
+    image: nginx:1.23.3
+    networks:
+      - private
+      - public
+
+  non_public_container_in_private_network:
+    image: nginx:1.23.3
+    networks:
+      - private
+
+networks:
+  private:
+  public:
+

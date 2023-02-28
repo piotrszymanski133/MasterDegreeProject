@@ -20,7 +20,7 @@ class IsolatedContainersChecker(BaseChecker):
 
         results = [self.__is_any_container_from_network_is_accessible_from_outside(network) for network in filtered_networks]
         if results.count(False) == 0:
-            self.logger.info("All of the containers are accessible directly or indirectly from outside of the Docker")
+            self.logger.info("All of the containers are accessible directly or transitively from outside of the Docker")
             return CheckerResult.PASSED
 
         return CheckerResult.FAILED
@@ -38,6 +38,7 @@ class IsolatedContainersChecker(BaseChecker):
                 if port_out is not None:
                     return True
 
+        inaccessible_containers = []
         for container in network_containers:
             container_networks = container.attrs.get('NetworkSettings').get('Networks')
             for network_name, network_info in container_networks.items():
@@ -47,5 +48,8 @@ class IsolatedContainersChecker(BaseChecker):
                     result = self.__is_any_container_from_network_is_accessible_from_outside(new_full_network_to_check)
                     if result is True:
                         return True
-            self.logger.error(f"Container {container.id} is not accessible directly or indirectly from outside of the Docker")
+            inaccessible_containers.append(container)
+
+        for inaccessible_container in inaccessible_containers:
+            self.logger.error(f"Container {inaccessible_container.id} is not accessible directly or transitively from outside of the Docker")
         return False

@@ -24,12 +24,6 @@ class IsolatedContainersChecker(BaseChecker):
             return CheckerResult.PASSED
 
         return CheckerResult.FAILED
-        #Biere sieci
-        #Biere wszystkie kontenery z każdej sieci
-        #Sprawdzam, czy któryś jest dostępny na zewnątrz, jeśli tak to jest ok
-        #Jeśli nie to sprawdzam, czy któryś ma więcej sieci
-        #Jeśli tak to sprawdzam w tych sieciach, czy coś jest dostępne na zewnątrz
-        #Jeśli nie to usługa izolowana
 
     def __is_any_container_from_network_is_accessible_from_outside(self, network: Network):
         network_containers = network.containers

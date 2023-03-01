@@ -120,6 +120,16 @@ volume_config = {
     'Scope': 'local'
 }
 
+unsafe_mountpoint_volume_config = {
+    'Name': 'TestUnsafeVolume',
+    'Driver': 'local',
+    'Mountpoint': '/etc',
+    'Labels': {
+        'com.example.some-label': 'some-value'
+    },
+    'Scope': 'local'
+}
+
 master_node_config = {
     'Id': 'TestNode',
     'ShortId': 'TestNode',

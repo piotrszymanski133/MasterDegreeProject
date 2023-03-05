@@ -26,5 +26,5 @@ class ErrorsInLogsChecker(BaseChecker):
             return CheckerResult.FAILED
 
     def __filter_error_logs(self, log_list):
-        filtered_list = [s for s in log_list if "error" in s.lower()]
-        return "\n".join(filtered_list)
+        severities = ["error", "fatal", "critical"]
+        return "\n".join(log for log in log_list if any(sub in log.lower() for sub in severities))

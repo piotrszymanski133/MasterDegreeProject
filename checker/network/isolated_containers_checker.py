@@ -1,3 +1,4 @@
+from docker.models.containers import Container
 from docker.models.networks import Network
 
 from checker.base_checker import BaseChecker
@@ -12,21 +13,23 @@ class IsolatedContainersChecker(BaseChecker):
         for network in networks:
             try:
                 network_with_full_info = self.docker_client.networks.get(network.id)
-                if len(network_with_full_info.containers) == 1:
+                if len(network_with_full_info.containers) == 1 or network_with_full_info.name.lower() == "none":
                     filtered_networks.append(network_with_full_info)
             except:
                 self.logger.error(f"There was an exception during fetching information about network {network.id}. "
                                   f"Please check it manually")
 
-        results = [self.__is_isolated_container_accessible_from_outside(network) for network in filtered_networks]
+        results = []
+        for network in filtered_networks:
+            for container in network.containers:
+                results.append(self.__is_container_accessible_from_outside(network, container))
         if results.count(False) == 0:
             self.logger.info("There are no isolated containers in your Docker instance!")
             return CheckerResult.PASSED
 
         return CheckerResult.FAILED
 
-    def __is_isolated_container_accessible_from_outside(self, network: Network):
-        network_container = network.containers.pop()
+    def __is_container_accessible_from_outside(self, network: Network, network_container: Container):
         for port_in, port_out in network_container.ports.items():
             if port_out is not None:
                 return True
@@ -37,7 +40,7 @@ class IsolatedContainersChecker(BaseChecker):
             if network_id_to_check != network.id:
                 new_full_network_to_check = self.docker_client.networks.get(network_id_to_check)
                 if len(new_full_network_to_check.containers) == 1:
-                    result = self.__is_isolated_container_accessible_from_outside(new_full_network_to_check)
+                    result = self.__is_container_accessible_from_outside(new_full_network_to_check, network_container)
                     if result is True:
                         return True
 

@@ -4,3 +4,4 @@ import checker.volume.unused_volume_checker
 import checker.node.number_of_master_nodes_checker
 import checker.network.isolated_containers_checker
 import checker.volume.sensitive_mountpoint_checker
+import checker.log.errors_in_logs_checker

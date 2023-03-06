@@ -16,7 +16,7 @@ class IsolatedContainersChecker(BaseChecker):
                 if len(network_with_full_info.containers) == 1 or network_with_full_info.name.lower() == "none":
                     filtered_networks.append(network_with_full_info)
             except:
-                self.logger.error(f"There was an exception during fetching information about network {network.id}. "
+                self.logger.error(f"An exception was thrown during fetching information about network {network.id}. "
                                   f"Please check it manually")
 
         results = []

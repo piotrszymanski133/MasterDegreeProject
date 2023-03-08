@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+    nginx:
+        image: nginx:1.23.3
+        restart: on-failure:5
+    python:
+        image: python:3.9.16
+        restart: on-failure:5
+    redis:
+        image: redis:7.0.9
+        restart: on-failure:5
+    postgres:
+        image: postgres:15.2
+        restart: on-failure:5
+    node:
+        image: node:17-slim
+        restart: on-failure:5
+    httpd:
+        image: httpd:2.4
+        restart: on-failure:5
+    mongo:
+        image: mongo:6.0
+        restart: on-failure:5
+    mysql:
+        image: mysql:8.0-debian
+        restart: on-failure:5
+    memcached:
+        image: memcached:1.6
+        restart: on-failure:5
+    traefik:
+        image: traefik:1.7.34
+        restart: on-failure:5
+    mariadb:
+        image: mariadb:10.7.8
+        restart: on-failure:5
+    docker:
+        image: docker:23.0.1
+        restart: on-failure:5
+    rabbitmq:
+        image: rabbitmq:3.11.10
+        restart: on-failure:5
+    openjdk:
+        image: openjdk:21
+        restart: on-failure:5
+    golang:
+        image: golang:1.20.1
+        restart: on-failure:5
+    registry:
+        image: registry:2.8.1
+        restart: on-failure:5
+    wordpress:
+        image: wordpress:6.1.1
+        restart: on-failure:5

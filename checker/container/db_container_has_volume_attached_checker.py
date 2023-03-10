@@ -11,19 +11,23 @@ class DbContainerHasVolumeAttachedChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
         containers = self.docker_client.containers.list()
         all_db_containers_have_volumes = True
+        found_db_container = False
         for container in containers:
             if self.database_container_detector.is_container_a_db_container(container):
+                found_db_container = True
                 if not self.__is_volume_attached(container):
                     all_db_containers_have_volumes = False
                     self.logger.error(f"Database container {container.id} don't have a volume attached. Please attach "
                                       f"a volume to this container so the data will be safe")
 
-        if all_db_containers_have_volumes:
+        if not found_db_container:
+            self.logger.info("Did not detect any database container!")
+            return CheckerResult.PASSED
+        elif all_db_containers_have_volumes:
             self.logger.info("All of the detected database containers have volumes attached")
             return CheckerResult.PASSED
-
         else:
             return CheckerResult.FAILED
 
     def __is_volume_attached(self, container: Container):
-        pass
+        return len(container.attrs.get('Mounts')) > 0

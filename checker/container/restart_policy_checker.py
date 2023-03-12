@@ -38,13 +38,13 @@ class RestartPolicyChecker(BaseChecker):
         if restart_policy_name != "on-failure":
             error_info = f"Restart policy for container {container.id} is not set to on-failure! You should set this" \
                          f" policy and set the maximum retry count property to 5 or lower."
-            self.logger.error(error_info)
+            self.logger.warning(error_info)
             test_passed = False
 
         elif restart_policy_max_retry_count > 5:
             error_info = f"Maximum retry count for container {container.id} is set to {restart_policy_max_retry_count}." \
                          f" It should be set to 5 or lower."
-            self.logger.error(error_info)
+            self.logger.warning(error_info)
             test_passed = False
 
         return test_passed, error_info

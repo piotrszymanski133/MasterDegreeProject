@@ -16,7 +16,7 @@ class IsolatedContainersChecker(BaseChecker):
                 if len(network_with_full_info.containers) == 1 or network_with_full_info.name.lower() == "none":
                     filtered_networks.append(network_with_full_info)
             except:
-                self.logger.error(f"An exception was thrown during fetching information about network {network.id}. "
+                self.logger.warning(f"An exception was thrown during fetching information about network {network.id}. "
                                   f"Please check it manually")
 
         results = []
@@ -47,6 +47,6 @@ class IsolatedContainersChecker(BaseChecker):
         if len(network_container.attrs.get('Mounts')) > 0:
             return True
 
-        self.logger.error(f"Container {network_container.id} is isolated! It does not have any network connection with "
+        self.logger.warning(f"Container {network_container.id} is isolated! It does not have any network connection with "
                           f"other containers, it does not map any ports, and does not have any volumes attached.")
         return False

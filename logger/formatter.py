@@ -21,13 +21,13 @@ class Formatter(logging.Formatter):
     red = "\x1b[31;20m"
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
-    format = "%(name)s - %(levelname)s: %(message)s"
+    format = "%(name)s: %(message)s"
 
     FORMATS = {
         logging.DEBUG: grey + format + reset,
         logging.INFO: green + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
+        logging.WARNING: red + format + reset,
+        logging.ERROR: bold_red + format + reset,
         logging.CRITICAL: bold_red + format + reset
     }
 

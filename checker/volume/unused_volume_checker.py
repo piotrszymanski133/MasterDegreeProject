@@ -30,7 +30,7 @@ class UnusedVolumeChecker(BaseChecker):
             .filter(lambda mount_points: self.__is_volume_attached_to_container(volume, mount_points))
 
         if containers_attached_to_volume.len() == 0:
-            self.logger.error(f"Volume {volume.name} is not attached to any container!")
+            self.logger.warning(f"Volume {volume.name} is not attached to any container!")
             return True
 
         return False

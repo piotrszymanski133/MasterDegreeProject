@@ -19,7 +19,7 @@ class RestartCountChecker(BaseChecker):
                     restarts += 1
 
             if restarts >= 3:
-                self.logger.error(f"Container {container.id} has restarted {restarts} times in the last 24 hours. "
+                self.logger.warning(f"Container {container.id} has restarted {restarts} times in the last 24 hours. "
                                   f"Please check what was the reason.")
                 passed = False
 

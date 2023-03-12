@@ -17,7 +17,7 @@ class ErrorsInLogsChecker(BaseChecker):
                 filtered_error_logs = self.__filter_error_logs(error_logs_list)
                 if filtered_error_logs != "":
                     passed = False
-                    self.logger.error(f"Found error logs in the last 24h for the container {container.id}:\n{filtered_error_logs}")
+                    self.logger.warning(f"Found error logs in the last 24h for the container {container.id}:\n{filtered_error_logs}")
 
         if passed:
             self.logger.info("Did not found any errors in container logs from last 24h!")

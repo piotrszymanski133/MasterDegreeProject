@@ -10,7 +10,7 @@ class SecretsInEnvChecker(BaseChecker):
             envs = container.attrs.get('Config').get('Env')
             potential_secret_envs = self.__detect_potential_secret_envs(envs)
             for secret_env in potential_secret_envs:
-                self.logger.error(f"Env variable {secret_env} in container {container.id} may contain a hardcoded "
+                self.logger.warning(f"Env variable {secret_env} in container {container.id} may contain a hardcoded "
                                   f"secret. Please check it and remove if it really contains a secret")
                 passed = False
 

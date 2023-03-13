@@ -32,8 +32,8 @@ class RestartPolicyChecker(BaseChecker):
         restart_policy_max_retry_count = restart_policy.get(self.RESTART_POLICY_MAX_RETRY_COUNT_PROPERTY_NAME)
 
         if restart_policy_name != "on-failure":
-            error_info = f"Restart policy for container {container.id} is not set to on-failure! You should set this" \
-                         f" policy and set the maximum retry count property to 5 or lower."
+            error_info = f"Restart policy for container {container.id} is set to {restart_policy_name}! Please set " \
+                         f"this policy to on-failure and set the maximum retry count property to 5 or lower."
             self.logger.warning(error_info)
             test_passed = False
 

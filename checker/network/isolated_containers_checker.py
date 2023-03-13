@@ -47,6 +47,6 @@ class IsolatedContainersChecker(BaseChecker):
         if len(network_container.attrs.get('Mounts')) > 0:
             return True
 
-        self.logger.warning(f"Container {network_container.id} is isolated! It does not have any network connection with "
+        self.logger.warning(f"Container {network_container.id} is isolated! It is not connected by network with "
                           f"other containers, it does not map any ports, and does not have any volumes attached.")
         return False

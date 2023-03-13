@@ -15,7 +15,7 @@ class SecretsInEnvChecker(BaseChecker):
                 passed = False
 
         if passed:
-            self.logger.info("Did not found any container with environment variables containing potential secrets!")
+            self.logger.info("Did not find any container with environment variables containing potential secrets!")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED

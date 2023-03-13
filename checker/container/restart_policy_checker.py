@@ -1,6 +1,5 @@
 from docker import DockerClient
 from docker.models.containers import Container
-from functional import seq
 from checker.base_checker import BaseChecker
 from checker.result.checker_result import CheckerResult
 
@@ -11,23 +10,20 @@ class RestartPolicyChecker(BaseChecker):
     RESTART_POLICY_NAME_PROPERTY_NAME = "Name"
     RESTART_POLICY_MAX_RETRY_COUNT_PROPERTY_NAME = "MaximumRetryCount"
 
-    def __init__(self, docker_client: DockerClient):
-        super().__init__(docker_client)
-
     def run_checker(self) -> CheckerResult:
         containers = self.docker_client.containers.list()
-        failed_containers = seq(containers) \
-            .map(self.__check_container_restart_policy) \
-            .filter(lambda result: result[0] is False)
+        passed = True
+        for container in containers:
+            if not self.__is_container_restart_policy_valid(container):
+                passed = False
 
-        if failed_containers.len() > 0:
-            return CheckerResult.FAILED
-        else:
+        if passed:
             self.logger.info("Restart policies are set properly")
             return CheckerResult.PASSED
+        else:
+            return CheckerResult.FAILED
 
-    def __check_container_restart_policy(self, container: Container) -> tuple[bool, str]:
-        error_info = ""
+    def __is_container_restart_policy_valid(self, container: Container) -> bool:
         test_passed = True
         restart_policy = container.attrs \
             .get(self.HOST_CONFIG_PROPERTY_NAME) \
@@ -47,7 +43,7 @@ class RestartPolicyChecker(BaseChecker):
             self.logger.warning(error_info)
             test_passed = False
 
-        return test_passed, error_info
+        return test_passed
 
     def __generate_message(self, messages: str) -> str:
         error_message = ""

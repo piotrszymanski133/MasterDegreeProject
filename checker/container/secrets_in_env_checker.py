@@ -22,11 +22,17 @@ class SecretsInEnvChecker(BaseChecker):
 
     def __detect_potential_secret_envs(self, envs: list[str]):
         potential_secret_env_keywords = ['PASS', 'KEY', 'SECRET', 'TOKEN']
+        non_secret_env_keywords = ['ID', 'LOCATION']
         potential_secret_envs = []
         for env in envs:
             env_name, env_value = env.split('=', 1)
             for keyword in potential_secret_env_keywords:
                 if keyword in env_name and not env_value.startswith('/run/secrets/'):
-                    potential_secret_envs.append(env_name)
+                    false_positive = False
+                    for non_secret_keyword in non_secret_env_keywords:
+                        if non_secret_keyword in env_name:
+                            false_positive = True
+                    if not false_positive:
+                        potential_secret_envs.append(env_name)
 
         return potential_secret_envs

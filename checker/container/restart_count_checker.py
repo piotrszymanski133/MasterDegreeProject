@@ -15,7 +15,7 @@ class RestartCountChecker(BaseChecker):
             events = self.docker_client.api.events(filters={"container": container.id}, decode=True,
                                                    since=datetime_24h_ago, until=datetime_now)
             for event in events:
-                if event['status'] == 'restart':
+                if event['status'] == 'restart' or event['status'] == 'start':
                     restarts += 1
 
             if restarts >= 3:

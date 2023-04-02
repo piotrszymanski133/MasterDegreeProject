@@ -17,13 +17,13 @@ class DbContainerHasVolumeAttachedChecker(BaseChecker):
                 if not self.__is_volume_attached(container):
                     all_db_containers_have_volumes = False
                     self.logger.warning(f"Database container {container.id} don't have a volume attached. Please attach "
-                                      f"a volume to this container so the data will be safe")
+                                      f"a volume to this container so the data will be safe.")
 
         if not found_db_container:
-            self.logger.info("Did not detect any database container!")
+            self.logger.info("Did not detect any database container.")
             return CheckerResult.PASSED
         elif all_db_containers_have_volumes:
-            self.logger.info("All of the detected database containers have volumes attached")
+            self.logger.info("All of the detected database containers have volumes attached.")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED

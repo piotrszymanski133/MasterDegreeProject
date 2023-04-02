@@ -11,14 +11,14 @@ class ContainerImageChecker(BaseChecker):
             if 'latest' in image:
                 passed = False
                 self.logger.warning(f"Container {container.id} was started using image with latest tag - {image}."
-                                    f" Please use other tag or sha256 hash of the image")
+                                    f" Please use other tag or sha256 hash of the image.")
             elif ':' not in image:
                 passed = False
                 self.logger.warning(f"Container {container.id} was started using image without specifying tag - {image}."
-                                    f" Please use tag or sha256 hash of the image")
+                                    f" Please use tag or sha256 hash of the image.")
 
         if passed:
-            self.logger.info("All of the containers were started using proper tag or sha256 tag!")
+            self.logger.info("All of the containers were started using proper tag or sha256 tag.")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED

@@ -21,7 +21,7 @@ class UnusedVolumeChecker(BaseChecker):
         if unattached_volumes.len() > 0:
             return CheckerResult.FAILED
         else:
-            self.logger.info("There are no unused volumes!")
+            self.logger.info("There are no unused volumes.")
             return CheckerResult.PASSED
 
     def __is_volume_unattached(self, volume: Volume, containers: list[Container]) -> bool:
@@ -30,7 +30,7 @@ class UnusedVolumeChecker(BaseChecker):
             .filter(lambda mount_points: self.__is_volume_attached_to_container(volume, mount_points))
 
         if containers_attached_to_volume.len() == 0:
-            self.logger.warning(f"Volume {volume.name} is not attached to any container!")
+            self.logger.warning(f"Volume {volume.name} is not attached to any container.")
             return True
 
         return False

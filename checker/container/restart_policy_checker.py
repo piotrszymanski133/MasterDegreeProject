@@ -18,7 +18,7 @@ class RestartPolicyChecker(BaseChecker):
                 passed = False
 
         if passed:
-            self.logger.info("Restart policies are set properly")
+            self.logger.info("Restart policies are set properly.")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED

@@ -14,9 +14,9 @@ class NumberOfMasterNodesChecker(BaseChecker):
 
         if manager_nodes_count % 2 == 0 or manager_nodes_count > 7:
             self.logger.warning(f"The number of manager nodes is {manager_nodes_count} which is invalid! "
-                              f"Swarm should consist of an odd number and less than 8 manager nodes")
+                              f"Swarm should consist of an odd number and less than 8 manager nodes.")
             return CheckerResult.FAILED
 
         else:
-            self.logger.info(f"The number of manager nodes is {manager_nodes_count} which is valid!")
+            self.logger.info(f"The number of manager nodes is {manager_nodes_count} which is valid.")
             return CheckerResult.PASSED

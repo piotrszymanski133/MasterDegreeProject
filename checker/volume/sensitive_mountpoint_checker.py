@@ -13,12 +13,12 @@ class SensitiveMountPointChecker(BaseChecker):
             if mountpoint in self.SENSITIVE_DIRECTORIES:
                 is_any_unsafe_mountpoint = True
                 self.logger.warning(f"Volume {volume.id} is mounted to {mountpoint} which is sensitive directory!"
-                                  f" You should change the mount point to safer location")
+                                  f" You should change the mount point to safer location.")
 
         if is_any_unsafe_mountpoint:
             return CheckerResult.FAILED
 
         else:
-            self.logger.info("All volumes are mounted to a safe, non-sensitive host locations!")
+            self.logger.info("All volumes are mounted to a safe, non-sensitive host locations.")
             return CheckerResult.PASSED
 

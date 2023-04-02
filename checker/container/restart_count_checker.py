@@ -24,7 +24,7 @@ class RestartCountChecker(BaseChecker):
                 passed = False
 
         if passed:
-            self.logger.info("Did not find any containers with more than 3 restarts in the last 24 hours")
+            self.logger.info("Did not find any containers with more than 3 restarts in the last 24 hours.")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED

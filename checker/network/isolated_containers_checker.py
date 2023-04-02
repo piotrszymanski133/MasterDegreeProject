@@ -17,14 +17,14 @@ class IsolatedContainersChecker(BaseChecker):
                     filtered_networks.append(network_with_full_info)
             except:
                 self.logger.warning(f"An exception was thrown during fetching information about network {network.id}. "
-                                  f"Please check it manually")
+                                  f"Please check it manually.")
 
         results = []
         for network in filtered_networks:
             for container in network.containers:
                 results.append(self.__is_container_accessible_from_outside(network, container))
         if results.count(False) == 0:
-            self.logger.info("There are no isolated containers in your Docker instance!")
+            self.logger.info("There are no isolated containers in your Docker instance.")
             return CheckerResult.PASSED
 
         return CheckerResult.FAILED

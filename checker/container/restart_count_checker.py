@@ -18,7 +18,7 @@ class RestartCountChecker(BaseChecker):
                 if event['status'] == 'restart' or event['status'] == 'start':
                     restarts += 1
 
-            if restarts >= 3:
+            if restarts > 3:
                 self.logger.warning(f"Container {container.id} has restarted {restarts} times in the last 24 hours. "
                                   f"Please check what was the reason.")
                 passed = False

@@ -3,17 +3,18 @@ from checker.result.checker_result import CheckerResult
 
 
 class SensitiveMountPointChecker(BaseChecker):
-    SENSITIVE_DIRECTORIES = ['/', '/boot', '/dev', '/etc', '/lib', '/proc', '/sys', '/usr']
+    ROOT_DIRECTORY = '/'
+    SENSITIVE_DIRECTORIES = ['/boot', '/dev', '/etc', '/lib', '/proc', '/sys', '/usr']
 
     def run_checker(self) -> CheckerResult:
         volumes = self.docker_client.volumes.list()
         is_any_unsafe_mountpoint = False
         for volume in volumes:
             mountpoint = volume.attrs.get('Mountpoint')
-            if mountpoint in self.SENSITIVE_DIRECTORIES:
+            if mountpoint == self.ROOT_DIRECTORY or any(map(mountpoint.startswith, self.SENSITIVE_DIRECTORIES)):
                 is_any_unsafe_mountpoint = True
                 self.logger.warning(f"Volume {volume.id} is mounted to {mountpoint} which is sensitive directory!"
-                                  f" You should change the mount point to safer location.")
+                                    f" You should change the mount point to safer location.")
 
         if is_any_unsafe_mountpoint:
             return CheckerResult.FAILED
@@ -21,4 +22,3 @@ class SensitiveMountPointChecker(BaseChecker):
         else:
             self.logger.info("All volumes are mounted to a safe, non-sensitive host locations.")
             return CheckerResult.PASSED
-

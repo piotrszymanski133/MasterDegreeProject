@@ -21,7 +21,7 @@ class CpuAndMemoryLimitsChecker(BaseChecker):
                                   f" this container.")
                 are_only_containers_with_limits = False
             elif not has_container_memory_limit:
-                self.logger.warning(f"No memory limit is set for the container {container.id}. Please set the CPU limit "
+                self.logger.warning(f"No memory limit is set for the container {container.id}. Please set the memory limit "
                                   f"for this container.")
                 are_only_containers_with_limits = False
 

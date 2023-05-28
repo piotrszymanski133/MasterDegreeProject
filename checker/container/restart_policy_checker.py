@@ -1,6 +1,7 @@
 from docker import DockerClient
 from docker.models.containers import Container
-from functional import seq
+from docker.models.services import Service
+
 from checker.base_checker import BaseChecker
 from checker.result.checker_result import CheckerResult
 
@@ -11,23 +12,27 @@ class RestartPolicyChecker(BaseChecker):
     RESTART_POLICY_NAME_PROPERTY_NAME = "Name"
     RESTART_POLICY_MAX_RETRY_COUNT_PROPERTY_NAME = "MaximumRetryCount"
 
-    def __init__(self, docker_client: DockerClient):
-        super().__init__(docker_client)
-
     def run_checker(self) -> CheckerResult:
+        passed = True
         containers = self.docker_client.containers.list()
-        failed_containers = seq(containers) \
-            .map(self.__check_container_restart_policy) \
-            .filter(lambda result: result[0] is False)
+        services = self.docker_client.services.list()
+        service_ids = []
+        for service in services:
+            service_ids.append(service.id)
+            if not self.__is_service_restart_policy_valid(service):
+                passed = False
+        for container in containers:
+            if not container.labels.get("com.docker.swarm.service.id") in service_ids and \
+                    not self.__is_container_restart_policy_valid(container):
+                passed = False
 
-        if failed_containers.len() > 0:
-            return CheckerResult.FAILED
-        else:
-            self.logger.info("Restart policies are set properly")
+        if passed:
+            self.logger.info("Restart policies are set properly.")
             return CheckerResult.PASSED
+        else:
+            return CheckerResult.FAILED
 
-    def __check_container_restart_policy(self, container: Container) -> tuple[bool, str]:
-        error_info = ""
+    def __is_container_restart_policy_valid(self, container: Container) -> bool:
         test_passed = True
         restart_policy = container.attrs \
             .get(self.HOST_CONFIG_PROPERTY_NAME) \
@@ -35,9 +40,14 @@ class RestartPolicyChecker(BaseChecker):
         restart_policy_name = restart_policy.get(self.RESTART_POLICY_NAME_PROPERTY_NAME).lower()
         restart_policy_max_retry_count = restart_policy.get(self.RESTART_POLICY_MAX_RETRY_COUNT_PROPERTY_NAME)
 
-        if restart_policy_name != "on-failure":
-            error_info = f"Restart policy for container {container.id} is not set to on-failure! You should set this" \
-                         f" policy and set the maximum retry count property to 5 or lower."
+        if restart_policy_name == "":
+            error_info = f"Restart policy for container {container.id} is not set! Please set " \
+                         f"this policy to on-failure and set the maximum retry count property to 5 or lower."
+            self.logger.warning(error_info)
+            test_passed = False
+        elif restart_policy_name != "on-failure":
+            error_info = f"Restart policy for container {container.id} is set to {restart_policy_name}! Please set " \
+                         f"this policy to on-failure and set the maximum retry count property to 5 or lower."
             self.logger.warning(error_info)
             test_passed = False
 
@@ -47,7 +57,34 @@ class RestartPolicyChecker(BaseChecker):
             self.logger.warning(error_info)
             test_passed = False
 
-        return test_passed, error_info
+        return test_passed
+
+    def __is_service_restart_policy_valid(self, service: Service) -> bool:
+        restart_policy = service.attrs.get('Spec').get('TaskTemplate').get('RestartPolicy')
+
+        if type(restart_policy) is not dict:
+            error_info = f"Restart policy for service {service.id} is not set! Please set " \
+                         f"this policy to on-failure and set the maximum retry count property to 5 or lower."
+            self.logger.warning(error_info)
+            return False
+
+        restart_condition = restart_policy.get('Condition')
+        restart_max_attempts = restart_policy.get('MaxAttempts')
+        test_passed = True
+
+        if restart_condition != "on-failure":
+            error_info = f"Restart policy for container {service.id} is set to {restart_condition}! Please set " \
+                         f"this policy to on-failure and set the maximum retry count property to 5 or lower."
+            self.logger.warning(error_info)
+            test_passed = False
+
+        elif restart_max_attempts > 5:
+            error_info = f"Maximum retry count for service {service.id} is set to {restart_max_attempts}." \
+                         f" It should be set to 5 or lower."
+            self.logger.warning(error_info)
+            test_passed = False
+
+        return test_passed
 
     def __generate_message(self, messages: str) -> str:
         error_message = ""

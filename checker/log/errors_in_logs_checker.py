@@ -20,11 +20,18 @@ class ErrorsInLogsChecker(BaseChecker):
                     self.logger.warning(f"Found error logs in the last 24h for the container {container.id}:\n{filtered_error_logs}")
 
         if passed:
-            self.logger.info("Did not found any errors in container logs from last 24h!")
+            self.logger.info("Did not find any errors in container logs from last 24h.")
             return CheckerResult.PASSED
         else:
             return CheckerResult.FAILED
 
-    def __filter_error_logs(self, log_list):
-        severities = ["error", "fatal", "critical"]
-        return "\n".join(log for log in log_list if any(sub in log.lower() for sub in severities))
+    def __filter_error_logs(self, log_list: list[str]):
+        severities = ["err", "fatal", "crit", "fail"]
+        potential_error_logs = []
+        for log in log_list:
+            for severity in severities:
+                severity_index = log.lower().find(severity)
+                if severity_index > -1:
+                    if severity_index == 0 or log[severity_index - 1] == " " or log[severity_index - 1] == "\t":
+                        potential_error_logs.append(log)
+        return "\n".join(err_log for err_log in potential_error_logs)

@@ -22,7 +22,7 @@ class RestartCountChecker(BaseChecker):
                     shutdowns += 1
 
             if shutdowns > 3:
-                self.logger.warning(f"Service {service.id} has  {shutdowns} shutdown or failed tasks in the last "
+                self.logger.warning(f"Service {service.id} has {shutdowns} shutdown or failed tasks in the last "
                                     f"24 hours. Please check what was the reason.")
                 passed = False
 

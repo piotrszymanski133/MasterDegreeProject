@@ -5,22 +5,25 @@ from checker.result.checker_result import CheckerResult
 
 
 class RestartCountChecker(BaseChecker):
+    TASK_DOWN_STATES = ["failed", "shutdown"]
     def run_checker(self) -> CheckerResult:
-        containers = self.docker_client.containers.list()
-        passed = True
-        for container in containers:
-            restarts = 0
-            datetime_now = datetime.utcnow()
-            datetime_24h_ago = datetime_now - timedelta(days=1)
-            events = self.docker_client.api.events(filters={"container": container.id}, decode=True,
-                                                   since=datetime_24h_ago, until=datetime_now)
-            for event in events:
-                if event['status'] == 'restart' or event['status'] == 'start':
-                    restarts += 1
+        services = self.docker_client.services.list()
+        tasks = self.docker_client.api.tasks()
 
-            if restarts > 3:
-                self.logger.warning(f"Container {container.id} has restarted {restarts} times in the last 24 hours. "
-                                  f"Please check what was the reason.")
+        passed = True
+        for service in services:
+            datetime_24h_ago = datetime.utcnow() - timedelta(days=1)
+            shutdowns = 0
+            for task in tasks:
+                update_time_iso_format = task.get('UpdatedAt')[0:23]
+                task_update_date = datetime.fromisoformat(update_time_iso_format)
+                task_desired_state = task.get('DesiredState')
+                if task.get('ServiceID') == service.id and task_desired_state in self.TASK_DOWN_STATES and task_update_date > datetime_24h_ago:
+                    shutdowns += 1
+
+            if shutdowns > 3:
+                self.logger.warning(f"Service {service.id} has  {shutdowns} shutdown or failed tasks in the last "
+                                    f"24 hours. Please check what was the reason.")
                 passed = False
 
         if passed:

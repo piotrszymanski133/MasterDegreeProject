@@ -6,18 +6,17 @@ from checker.result.checker_result import CheckerResult
 class ErrorsInLogsChecker(BaseChecker):
 
     def run_checker(self) -> CheckerResult:
-        containers = self.docker_client.containers.list()
+        services = self.docker_client.services.list()
         passed = True
-        for container in containers:
+        for service in services:
             timestamp_day_ago = datetime.utcnow() - timedelta(days=1)
-            error_logs_bytes = container.logs(stdout=False, stderr=True, timestamps=True, since=timestamp_day_ago)
-            error_logs = error_logs_bytes.decode('utf-8')
+            generator = service.logs(stdout=False, stderr=True, since=timestamp_day_ago.timestamp())
+            error_logs = [x.decode("utf-8") for x in generator]
             if error_logs != "":
-                error_logs_list = error_logs.split(sep="\n")
-                filtered_error_logs = self.__filter_error_logs(error_logs_list)
+                filtered_error_logs = self.__filter_error_logs(error_logs)
                 if filtered_error_logs != "":
                     passed = False
-                    self.logger.warning(f"Found error logs in the last 24h for the container {container.id}:\n{filtered_error_logs}")
+                    self.logger.warning(f"Found error logs in the last 24h for the service {service.id}:\n{filtered_error_logs}")
 
         if passed:
             self.logger.info("Did not find any errors in container logs from last 24h.")

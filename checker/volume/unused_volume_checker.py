@@ -13,10 +13,10 @@ class UnusedVolumeChecker(BaseChecker):
 
     def run_checker(self) -> CheckerResult:
         volumes = self.docker_client.volumes.list()
-        containers = self.docker_client.containers.list()
+        tasks = self.docker_client.api.tasks()
         unattached_volumes = []
         for volume in volumes:
-            if self.__is_volume_unattached(volume,containers):
+            if self.__is_volume_unattached(volume, tasks):
                 unattached_volumes.append(volume)
 
         if len(unattached_volumes) > 0:
@@ -25,12 +25,15 @@ class UnusedVolumeChecker(BaseChecker):
             self.logger.info("There are no unused volumes.")
             return CheckerResult.PASSED
 
-    def __is_volume_unattached(self, volume: Volume, containers: list[Container]) -> bool:
+    def __is_volume_unattached(self, volume: Volume, tasks: list[dict]) -> bool:
         containers_attached_to_volume = []
-        for container in containers:
-            container_mounts = container.attrs.get('Mounts')
-            if self.__is_volume_attached_to_container(volume, container_mounts):
-                containers_attached_to_volume.append(container)
+        for task in tasks:
+            container_spec = task.get('Spec')
+            if 'Mounts' not in container_spec:
+                continue
+            mounts = container_spec.get('Mounts')
+            if self.__is_volume_attached_to_container(volume, mounts):
+                containers_attached_to_volume.append(task)
 
         if len(containers_attached_to_volume) == 0:
             self.logger.warning(f"Volume {volume.name} is not attached to any container. Please consider removing it or"
@@ -41,7 +44,7 @@ class UnusedVolumeChecker(BaseChecker):
 
     def __is_volume_attached_to_container(self, volume: Volume, container_mounts: list[dict]) -> bool:
         for container_mount in container_mounts:
-            if container_mount.get('Name') == volume.name:
+            if container_mount.get('Source') == volume.name:
                 return True
         return False
 

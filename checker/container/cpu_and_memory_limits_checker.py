@@ -35,9 +35,13 @@ class CpuAndMemoryLimitsChecker(BaseChecker):
             return CheckerResult.FAILED
 
     def __has_container_memory_limit(self, task: dict) -> bool:
-        limits = task.get('Spec').get('Resources').get('Limits')
+        limits = self.__get_limits(task)
         return "MemoryBytes" in limits
 
     def __has_container_cpu_limit(self, task: dict) -> bool:
-        limits = task.get('Spec').get('Resources').get('Limits')
+        limits = self.__get_limits(task)
         return "NanoCPUs" in limits
+
+    def __get_limits(self, task: dict) -> dict:
+        resources = task.get('Spec').get('Resources')
+        return resources.get('Limits') if 'Limits' in resources else {}

@@ -31,6 +31,10 @@ class ErrorsInLogsChecker(BaseChecker):
             for severity in severities:
                 severity_index = log.lower().find(severity)
                 if severity_index > -1:
-                    if severity_index == 0 or log[severity_index - 1] == " " or log[severity_index - 1] == "\t":
+                    if self.__is_severity_word_at_the_beginning_of_logs(log, severity_index):
                         potential_error_logs.append(log)
         return "\n".join(err_log for err_log in potential_error_logs)
+
+    def __is_severity_word_at_the_beginning_of_logs(self, log: str, severity_index: int) -> bool:
+        return severity_index == 0 or \
+            (severity_index < 40 and log[severity_index - 1] == " " or log[severity_index - 1] == "\t")

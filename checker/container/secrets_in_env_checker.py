@@ -4,13 +4,17 @@ from checker.result.checker_result import CheckerResult
 
 class SecretsInEnvChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
-        containers = self.docker_client.containers.list()
+        tasks = self.docker_client.api.tasks()
         passed = True
-        for container in containers:
-            envs = container.attrs.get('Config').get('Env')
+        for task in tasks:
+            container_spec = task.get('Spec').get('ContainerSpec')
+            if 'Env' not in container_spec:
+                continue
+            envs = container_spec.get('Env')
             potential_secret_envs = self.__detect_potential_secret_envs(envs)
+            container_id = task.get('Status').get('ContainerStatus').get('ContainerID')
             for secret_env in potential_secret_envs:
-                self.logger.warning(f"Env variable {secret_env} in container {container.id} may contain a hardcoded "
+                self.logger.warning(f"Env variable {secret_env} in container {container_id} may contain a hardcoded "
                                   f"secret. Please check it and remove if it really contains a secret.")
                 passed = False
                 break

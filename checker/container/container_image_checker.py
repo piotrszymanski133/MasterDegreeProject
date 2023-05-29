@@ -4,17 +4,21 @@ from checker.result.checker_result import CheckerResult
 
 class ContainerImageChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
-        containers = self.docker_client.containers.list()
+        tasks = self.docker_client.api.tasks()
         passed = True
-        for container in containers:
-            image = container.attrs.get('Config').get('Image')
+        for task in tasks:
+            image = task.get('Spec').get('ContainerSpec').get('Image')
+            status = task.get('Status')
+            if 'ContainerStatus' not in status:
+                continue
+            container_id = status.get('ContainerStatus').get('ContainerID')
             if 'latest' in image:
                 passed = False
-                self.logger.warning(f"Container {container.id} was started using image with latest tag - {image}."
+                self.logger.warning(f"Container {container_id} was started using image with latest tag - {image}."
                                     f" Please use other tag or sha256 hash of the image.")
             elif ':' not in image:
                 passed = False
-                self.logger.warning(f"Container {container.id} was started using image without specifying tag - {image}."
+                self.logger.warning(f"Container {container_id} was started using image without specifying tag - {image}."
                                     f" Please use tag or sha256 hash of the image.")
 
         if passed:

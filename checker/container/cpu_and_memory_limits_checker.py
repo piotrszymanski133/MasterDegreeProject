@@ -6,7 +6,7 @@ from checker.result.checker_result import CheckerResult
 
 class CpuAndMemoryLimitsChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
-        tasks = self.docker_client.api.tasks()
+        tasks = self.docker_client.api.tasks(filters={'desired-state': 'running'})
         are_only_containers_with_limits = True
         for task in tasks:
             has_container_cpu_limit = self.__has_container_cpu_limit(task)

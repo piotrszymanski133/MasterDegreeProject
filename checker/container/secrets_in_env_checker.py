@@ -4,7 +4,7 @@ from checker.result.checker_result import CheckerResult
 
 class SecretsInEnvChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
-        tasks = self.docker_client.api.tasks()
+        tasks = self.docker_client.api.tasks(filters={'desired-state': 'running'})
         passed = True
         for task in tasks:
             container_spec = task.get('Spec').get('ContainerSpec')

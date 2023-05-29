@@ -4,7 +4,7 @@ from checker.result.checker_result import CheckerResult
 
 class ContainerImageChecker(BaseChecker):
     def run_checker(self) -> CheckerResult:
-        tasks = self.docker_client.api.tasks()
+        tasks = self.docker_client.api.tasks(filters={'desired-state': 'running'})
         passed = True
         for task in tasks:
             image = task.get('Spec').get('ContainerSpec').get('Image')

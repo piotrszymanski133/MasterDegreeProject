@@ -44,6 +44,7 @@ class UnusedVolumeChecker(BaseChecker):
 
     def __is_volume_attached_to_container(self, volume: Volume, container_mounts: list[dict]) -> bool:
         for container_mount in container_mounts:
+            print(container_mount)
             if container_mount.get('Source') == volume.name:
                 return True
         return False
